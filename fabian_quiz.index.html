@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabian Quiz 🎉</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0e;
+    --card: #181818;
+    --border: #2a2a2a;
+    --text: #f0ede6;
+    --muted: #888;
+    --accent: #d4f35c;
+    --accent-dark: #8faa1e;
+    --correct-bg: #1a2e0a;
+    --correct-border: #5caa1e;
+    --correct-text: #b8f060;
+    --wrong-bg: #2e0a0a;
+    --wrong-border: #aa1e1e;
+    --wrong-text: #f06060;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .header .tag {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .header h1 span {
+    color: var(--accent);
+  }
+
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+  }
+
+  .option-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .option-btn:active { opacity: 0.8; transform: scale(0.99); }
+
+  .option-btn:not(:disabled):hover {
+    border-color: #444;
+    background: #222;
+  }
+
+  .option-btn.correct {
+    background: var(--correct-bg);
+    border-color: var(--correct-border);
+    color: var(--correct-text);
+  }
+
+  .option-btn.wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong-border);
+    color: var(--wrong-text);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .feedback {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 1rem;
+    min-height: 1rem;
+    font-style: italic;
+  }
+
+  .next-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #0e0e0e;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  .next-btn:active { opacity: 0.8; }
+
+  .score-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    display: none;
+  }
+
+  .score-emoji { font-size: 52px; margin-bottom: 1rem; }
+
+  .score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-denom {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .score-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .result-msg {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .restart-btn {
+    padding: 0.85rem 2rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .restart-btn:active { opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="tag">Happy Birthday</div>
+    <h1>Kennst du<br><span>Fabian?</span></h1>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">1 / 10</div>
+  </div>
+
+  <div class="card">
+    <div class="q-text" id="q-text"></div>
+    <div id="options"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <button class="next-btn" id="next-btn">Weiter →</button>
+
+  <div class="score-card" id="score-card"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Fabian hat gerade ein neues Hobby entdeckt. Was ist es?",
+    opts: ["Stricken", "Surfen", "Schach", "Kalligraphie"],
+    correct: 1,
+    feedback: "Richtig! Er reitet die Wellen — und seine Füsse bezahlen den Preis."
+  },
+  {
+    q: "Wie sehen Fabians Füsse nach einem Outdoor-Abenteuer aus?",
+    opts: ["Perfekt gepflegt", "Leicht gebräunt", "Wie ein Schlachtfeld", "Unberührt"],
+    correct: 2,
+    feedback: "Korrekt. Dermatologisch gesehen: ein Kunstwerk. Hauptsache er kommt heim."
+  },
+  {
+    q: "Fabian möchte schon lange ein Instrument lernen. Was fehlt ihm dazu?",
+    opts: ["Das Geld", "Die Zeit", "Die Ausdauer", "Das Talent"],
+    correct: 2,
+    feedback: "Volltreffer! Die Gitarre wartet. Fabian wartet nicht — aber auf Ausdauer."
+  },
+  {
+    q: "Was ist Fabians bevorzugte Freizeitbeschäftigung, wenn nichts los ist?",
+    opts: ["Meditieren", "Schlafen", "Puzzeln", "Tagebuch schreiben"],
+    correct: 1,
+    feedback: "Ja! Schlaf ist heilig — auch wenn er selten still dabei liegt."
+  },
+  {
+    q: "Fabian kann nicht still sitzen. Was ist am wahrscheinlichsten, wenn er „relaxt"?",
+    opts: ["Liest ein Buch reglos", "Plant das nächste Abenteuer", "Starrt die Wand an", "Macht Yoga"],
+    correct: 1,
+    feedback: "Natürlich. Ruhe ist bei Fabian ein relativer Begriff."
+  },
+  {
+    q: "Welches Fahrzeug gehört zu Fabian wie der Helm zu einem Surfer?",
+    opts: ["Rennrad", "Motorrad", "Tretroller", "Hoverboard"],
+    correct: 1,
+    feedback: "Richtig! Zwei Räder, offene Strasse — und Wind gegen die Füsse."
+  },
+  {
+    q: "Was schätzen Menschen an Fabian am meisten?",
+    opts: ["Dass er immer zu spät kommt", "Dass er zuverlässig und direkt ist", "Dass er Geheimnisse für sich behält", "Dass er nie hilft"],
+    correct: 1,
+    feedback: "Genau. Direkt, ehrlich, hilfsbereit — eine seltene Kombination."
+  },
+  {
+    q: "Was ist Fabians Verhältnis zu gutem Essen?",
+    opts: ["Er isst was kommt", "Er kocht leidenschaftlich", "Er geniesst es sehr", "Er vergisst oft zu essen"],
+    correct: 2,
+    feedback: "Klar! Gutes Essen ist für Fabian kein Luxus, sondern Grundrecht."
+  },
+  {
+    q: "Fabian feiert heute seinen Geburtstag. Welchen runden?",
+    opts: ["20", "25", "30", "35"],
+    correct: 2,
+    feedback: "30! Das Jahrzehnt der Vernunft beginnt — für andere. Für Fabian: Wellen surfen."
+  },
+  {
+    q: "Was würde Fabian am ehesten tun, wenn ein Plan zu langsam umgesetzt wird?",
+    opts: ["Geduldig warten", "Ungeduldig selbst anfangen", "Anderen die Schuld geben", "Aufgeben"],
+    correct: 1,
+    feedback: "Logisch. Ungeduld ist bei Fabian keine Schwäche — es ist Effizienz."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function render() {
+  const q = questions[current];
+  document.getElementById('prog').style.width = (current / questions.length * 100) + '%';
+  document.getElementById('prog-label').textContent = (current + 1) + ' / ' + questions.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => choose(i);
+    optDiv.appendChild(btn);
+  });
+}
+
+function choose(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  if (idx === q.correct) score++;
+  document.getElementById('feedback').textContent = q.feedback;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+document.getElementById('next-btn').onclick = () => {
+  current++;
+  if (current < questions.length) {
+    render();
+  } else {
+    showScore();
+  }
+};
+
+function showScore() {
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.querySelector('.card').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const pct = score / questions.length;
+  let emoji, msg;
+  if (pct === 1) {
+    emoji = '🏆'; msg = 'Perfekt! Du kennst Fabian besser als er sich selbst kennt. Verdächtig...';
+  } else if (pct >= 0.7) {
+    emoji = '🤙'; msg = 'Solide! Du hast gut aufgepasst. Fabian würde das mit einem Nicken quittieren.';
+  } else if (pct >= 0.4) {
+    emoji = '🤔'; msg = 'Mittelfeld. Mehr Zeit mit Fabian verbringen — und weniger auf seine Füsse schauen.';
+  } else {
+    emoji = '🏄'; msg = 'Ausbaufähig. Zum Glück ist Fabian so hilfsbereit, dass er dir das verzeiht.';
+  }
+
+  const card = document.getElementById('score-card');
+  card.innerHTML = `
+    <div class="score-emoji">${emoji}</div>
+    <div class="score-big">${score}</div>
+    <div class="score-denom">von ${questions.length}</div>
+    <div class="score-label">Punkte</div>
+    <div class="result-msg">${msg}</div>
+    <button class="restart-btn" id="restart">Nochmal spielen</button>
+  `;
+  card.style.display = 'block';
+
+  document.getElementById('restart').onclick = () => {
+    current = 0; score = 0;
+    card.style.display = 'none';
+    document.querySelector('.progress-wrap').style.display = 'flex';
+    document.querySelector('.card').style.display = 'block';
+    render();
+  };
+}
+
+render();
+</script>
+</body>
+</html>
