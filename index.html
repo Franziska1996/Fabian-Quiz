@@ -3,408 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fabian Quiz 🎉</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<title>Fabian Quiz</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0e0e0e;
-    --card: #181818;
-    --border: #2a2a2a;
-    --text: #f0ede6;
-    --muted: #888;
-    --accent: #d4f35c;
-    --accent-dark: #8faa1e;
-    --correct-bg: #1a2e0a;
-    --correct-border: #5caa1e;
-    --correct-text: #b8f060;
-    --wrong-bg: #2e0a0a;
-    --wrong-border: #aa1e1e;
-    --wrong-text: #f06060;
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 1.5rem 1rem 3rem;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 480px;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .header .tag {
-    display: inline-block;
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 4px 12px;
-    border-radius: 100px;
-    margin-bottom: 0.75rem;
-  }
-
-  .header h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1.2;
-  }
-
-  .header h1 span {
-    color: var(--accent);
-  }
-
-  .progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
-
-  .progress-track {
-    flex: 1;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-    transition: width 0.4s ease;
-  }
-
-  .progress-label {
-    font-size: 12px;
-    color: var(--muted);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .q-text {
-    font-family: 'Syne', sans-serif;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.4;
-    color: var(--text);
-    margin-bottom: 1.25rem;
-  }
-
-  .option-btn {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 0.85rem 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .option-btn:active { opacity: 0.8; transform: scale(0.99); }
-
-  .option-btn:not(:disabled):hover {
-    border-color: #444;
-    background: #222;
-  }
-
-  .option-btn.correct {
-    background: var(--correct-bg);
-    border-color: var(--correct-border);
-    color: var(--correct-text);
-  }
-
-  .option-btn.wrong {
-    background: var(--wrong-bg);
-    border-color: var(--wrong-border);
-    color: var(--wrong-text);
-  }
-
-  .option-btn:disabled { cursor: default; }
-
-  .feedback {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-top: 1rem;
-    min-height: 1rem;
-    font-style: italic;
-  }
-
-  .next-btn {
-    width: 100%;
-    padding: 0.9rem;
-    border-radius: 10px;
-    border: none;
-    background: var(--accent);
-    color: #0e0e0e;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    margin-top: 0.5rem;
-    display: none;
-  }
-
-  .next-btn:active { opacity: 0.8; }
-
-  .score-card {
-    text-align: center;
-    padding: 2rem 1rem;
-    display: none;
-  }
-
-  .score-emoji { font-size: 52px; margin-bottom: 1rem; }
-
-  .score-big {
-    font-family: 'Syne', sans-serif;
-    font-size: 64px;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .score-denom {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px;
-    color: var(--muted);
-    margin-bottom: 0.25rem;
-  }
-
-  .score-label {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .result-msg {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--text);
-    margin-bottom: 2rem;
-  }
-
-  .restart-btn {
-    padding: 0.85rem 2rem;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .restart-btn:active { opacity: 0.7; }
+body { margin: 0; padding: 20px; background: #111; color: #f0ede6; font-family: Arial, sans-serif; }
+h1 { text-align: center; color: #d4f35c; font-size: 28px; margin-bottom: 4px; }
+.sub { text-align: center; font-size: 13px; color: #888; margin-bottom: 24px; }
+.fortschritt { font-size: 13px; color: #888; margin-bottom: 8px; }
+.balken { background: #333; height: 4px; border-radius: 2px; margin-bottom: 20px; }
+.balken-fill { background: #d4f35c; height: 4px; border-radius: 2px; transition: width 0.3s; }
+.frage { background: #1e1e1e; border-radius: 12px; padding: 20px; margin-bottom: 12px; font-size: 17px; font-weight: bold; line-height: 1.5; }
+.antwort { display: block; width: 100%; text-align: left; padding: 14px 16px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: #f0ede6; font-size: 15px; cursor: pointer; }
+.antwort.richtig { background: #1a2e0a; border-color: #5caa1e; color: #b8f060; }
+.antwort.falsch { background: #2e0a0a; border-color: #aa1e1e; color: #f06060; }
+.feedback { font-size: 14px; color: #aaa; font-style: italic; margin: 10px 0 4px; min-height: 20px; line-height: 1.5; }
+.weiter { display: none; width: 100%; padding: 14px; border-radius: 10px; border: none; background: #d4f35c; color: #111; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+.ergebnis { display: none; text-align: center; padding: 20px 0; }
+.ergebnis-emoji { font-size: 48px; }
+.ergebnis-punkte { font-size: 56px; font-weight: bold; color: #d4f35c; }
+.ergebnis-text { font-size: 15px; line-height: 1.7; margin: 12px 0 20px; }
+.nochmal { padding: 12px 28px; border-radius: 10px; border: 1px solid #444; background: transparent; color: #f0ede6; font-size: 15px; cursor: pointer; margin-top: 16px; }
+.start { text-align: center; padding: 10px 0; }
+.start input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #444; background: #1a1a1a; color: #f0ede6; font-size: 16px; margin-bottom: 14px; text-align: center; box-sizing: border-box; }
+.start button { width: 100%; padding: 14px; border-radius: 10px; border: none; background: #d4f35c; color: #111; font-size: 16px; font-weight: bold; cursor: pointer; }
+.rangliste { margin-top: 24px; text-align: left; }
+.rangliste h2 { font-size: 15px; color: #d4f35c; margin-bottom: 12px; text-align: center; letter-spacing: 0.05em; }
+.rang-eintrag { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 8px; border-radius: 10px; background: #1e1e1e; border: 1px solid #2a2a2a; }
+.rang-eintrag.ich { border-color: #d4f35c; }
+.rang-platz { font-size: 18px; min-width: 32px; }
+.rang-name { flex: 1; padding: 0 10px; font-size: 15px; }
+.rang-punkte { font-size: 15px; font-weight: bold; color: #d4f35c; }
+.laden { text-align: center; color: #888; font-size: 14px; padding: 20px; }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="tag">Happy Birthday</div>
-    <h1>Kennst du<br><span>Fabian?</span></h1>
-  </div>
 
-  <div class="progress-wrap">
-    <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
-    <div class="progress-label" id="prog-label">1 / 10</div>
-  </div>
+<h1>Kennst du Fabian?</h1>
+<p class="sub">🎉 Morgen wird er 30!</p>
 
-  <div class="card">
-    <div class="q-text" id="q-text"></div>
-    <div id="options"></div>
-    <div class="feedback" id="feedback"></div>
-  </div>
+<div class="start" id="startscreen">
+  <p style="color:#888;font-size:14px;margin-bottom:16px;">Gib deinen Namen ein um zu starten</p>
+  <input type="text" id="nameInput" placeholder="Dein Name" maxlength="20" />
+  <button onclick="startQuiz()">Quiz starten</button>
+</div>
 
-  <button class="next-btn" id="next-btn">Weiter →</button>
+<div id="quiz" style="display:none">
+  <div class="fortschritt" id="fort">Frage 1 von 16</div>
+  <div class="balken"><div class="balken-fill" id="balken" style="width:0%"></div></div>
+  <div class="frage" id="frage"></div>
+  <div id="antworten"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="weiter" id="weiter">Weiter</button>
+</div>
 
-  <div class="score-card" id="score-card"></div>
+<div class="ergebnis" id="ergebnis">
+  <div class="ergebnis-emoji" id="emoji"></div>
+  <div style="font-size:16px;margin:8px 0;color:#aaa" id="ergebnis-name"></div>
+  <div class="ergebnis-punkte" id="punkte"></div>
+  <div style="color:#888;margin-bottom:4px" id="von"></div>
+  <div class="ergebnis-text" id="msg"></div>
+  <div class="rangliste" id="rangliste"><div class="laden">Rangliste wird geladen...</div></div>
+  <button class="nochmal" onclick="neustart()">Nochmal spielen</button>
 </div>
 
 <script>
-const questions = [
-  {
-    q: "Fabian hat gerade ein neues Hobby entdeckt. Was ist es?",
-    opts: ["Stricken", "Surfen", "Schach", "Kalligraphie"],
-    correct: 1,
-    feedback: "Richtig! Er reitet die Wellen — und seine Füsse bezahlen den Preis."
-  },
-  {
-    q: "Wie sehen Fabians Füsse nach einem Outdoor-Abenteuer aus?",
-    opts: ["Perfekt gepflegt", "Leicht gebräunt", "Wie ein Schlachtfeld", "Unberührt"],
-    correct: 2,
-    feedback: "Korrekt. Dermatologisch gesehen: ein Kunstwerk. Hauptsache er kommt heim."
-  },
-  {
-    q: "Fabian möchte schon lange ein Instrument lernen. Was fehlt ihm dazu?",
-    opts: ["Das Geld", "Die Zeit", "Die Ausdauer", "Das Talent"],
-    correct: 2,
-    feedback: "Volltreffer! Die Gitarre wartet. Fabian wartet nicht — aber auf Ausdauer."
-  },
-  {
-    q: "Was ist Fabians bevorzugte Freizeitbeschäftigung, wenn nichts los ist?",
-    opts: ["Meditieren", "Schlafen", "Puzzeln", "Tagebuch schreiben"],
-    correct: 1,
-    feedback: "Ja! Schlaf ist heilig — auch wenn er selten still dabei liegt."
-  },
-  {
-    q: "Fabian kann nicht still sitzen. Was ist am wahrscheinlichsten, wenn er „relaxt"?",
-    opts: ["Liest ein Buch reglos", "Plant das nächste Abenteuer", "Starrt die Wand an", "Macht Yoga"],
-    correct: 1,
-    feedback: "Natürlich. Ruhe ist bei Fabian ein relativer Begriff."
-  },
-  {
-    q: "Welches Fahrzeug gehört zu Fabian wie der Helm zu einem Surfer?",
-    opts: ["Rennrad", "Motorrad", "Tretroller", "Hoverboard"],
-    correct: 1,
-    feedback: "Richtig! Zwei Räder, offene Strasse — und Wind gegen die Füsse."
-  },
-  {
-    q: "Was schätzen Menschen an Fabian am meisten?",
-    opts: ["Dass er immer zu spät kommt", "Dass er zuverlässig und direkt ist", "Dass er Geheimnisse für sich behält", "Dass er nie hilft"],
-    correct: 1,
-    feedback: "Genau. Direkt, ehrlich, hilfsbereit — eine seltene Kombination."
-  },
-  {
-    q: "Was ist Fabians Verhältnis zu gutem Essen?",
-    opts: ["Er isst was kommt", "Er kocht leidenschaftlich", "Er geniesst es sehr", "Er vergisst oft zu essen"],
-    correct: 2,
-    feedback: "Klar! Gutes Essen ist für Fabian kein Luxus, sondern Grundrecht."
-  },
-  {
-    q: "Fabian feiert heute seinen Geburtstag. Welchen runden?",
-    opts: ["20", "25", "30", "35"],
-    correct: 2,
-    feedback: "30! Das Jahrzehnt der Vernunft beginnt — für andere. Für Fabian: Wellen surfen."
-  },
-  {
-    q: "Was würde Fabian am ehesten tun, wenn ein Plan zu langsam umgesetzt wird?",
-    opts: ["Geduldig warten", "Ungeduldig selbst anfangen", "Anderen die Schuld geben", "Aufgeben"],
-    correct: 1,
-    feedback: "Logisch. Ungeduld ist bei Fabian keine Schwäche — es ist Effizienz."
-  }
+var DB = 'https://fabian-30te-geburtsdaag-default-rtdb.firebaseio.com/rangliste';
+var fragen=[
+{f:"Fabian hat gerade ein neues Hobby entdeckt. Was ist es?",a:["Stricken","Surfen","Schach","Kalligraphie"],r:1,t:"Richtig! Er reitet die Wellen und seine Fuesse bezahlen den Preis."},
+{f:"Wie sehen Fabians Fuesse nach einem Outdoor-Abenteuer aus?",a:["Perfekt gepflegt","Leicht gebraunt","Wie ein Schlachtfeld","Unberuehrt"],r:2,t:"Korrekt. Dermatologisch gesehen ein Kunstwerk. Hauptsache er kommt heim."},
+{f:"Fabian moechte ein Instrument lernen. Was fehlt ihm dazu?",a:["Das Geld","Die Zeit","Die Ausdauer","Das Talent"],r:2,t:"Volltreffer! Die Gitarre wartet. Fabian wartet nicht aber auf Ausdauer."},
+{f:"Was macht Fabian am liebsten wenn nichts los ist?",a:["Meditieren","Schlafen","Puzzeln","Tagebuch schreiben"],r:1,t:"Ja! Schlaf ist heilig auch wenn er selten still dabei liegt."},
+{f:"Was tut Fabian am ehesten wenn er relaxt?",a:["Liest ein Buch reglos","Plant das naechste Abenteuer","Starrt die Wand an","Macht Yoga"],r:1,t:"Natuerlich. Ruhe ist bei Fabian ein relativer Begriff."},
+{f:"Welches Fahrzeug gehoert zu Fabian wie der Helm zum Surfer?",a:["Rennrad","Motorrad","Tretroller","Hoverboard"],r:1,t:"Richtig! Zwei Raeder, offene Strasse und Wind gegen die Fuesse."},
+{f:"Was schaetzen Menschen an Fabian am meisten?",a:["Immer zu spaet","Zuverlaessig und direkt","Behaelt alles fuer sich","Hilft nie"],r:1,t:"Genau. Direkt, ehrlich, hilfsbereit eine seltene Kombination."},
+{f:"Was ist Fabians Verhaeltnis zu gutem Essen?",a:["Isst was kommt","Kocht leidenschaftlich","Geniesst es sehr","Vergisst oft zu essen"],r:2,t:"Klar! Gutes Essen ist fuer Fabian kein Luxus, sondern Grundrecht."},
+{f:"Welchen runden Geburtstag feiert Fabian morgen?",a:["20","25","30","35"],r:2,t:"30! Das Jahrzehnt der Vernunft beginnt fuer andere. Fuer Fabian: Wellen surfen."},
+{f:"Was tut Fabian wenn ein Plan zu langsam umgesetzt wird?",a:["Geduldig warten","Ungeduldig selbst anfangen","Anderen die Schuld geben","Aufgeben"],r:1,t:"Logisch. Ungeduld ist bei Fabian keine Schwaeche es ist Effizienz."},
+{f:"Fabian ist der Aelteste von 3 Geschwistern. Was stimmt?",a:["Zwei juengere Brueder","Zwei juengere Schwestern","Ein juengerer Bruder und eine juengere Schwester","Er ist Einzelkind"],r:2,t:"Genau. Der Erstgeborene. Verantwortungsbewusstsein inklusive."},
+{f:"Was ist fuer Fabian ein absolutes No-Go bei Konfi und Joghurt?",a:["Zu kalt","Stuecke darin","Zu suess","Falsches Markenprodukt"],r:1,t:"Glatt muss es sein. Stuecke im Joghurt sind fuer Fabian eine Provokation."},
+{f:"Was ist fuer Fabian wie eine zweite Haut?",a:["Sein Motorradhelm","Seine Lieblingsjacke","Seine Tattoos","Seine Surfboard-Shorts"],r:2,t:"Nicht Dekoration. Identitaet."},
+{f:"Wie hat Fabian sein handwerkliches Geschick erworben?",a:["Lehre als Handwerker","YouTube-Tutorials seit Jahren","Notgedrungen weil er es nicht mehr delegieren konnte","Fabian und Heimwerken? Nie."],r:2,t:"Not macht erfinderisch. Und manchmal auch ein viel zu grosses Bohrloch."},
+{f:"Was passierte bei Fabians erstem Bohrloch-Einsatz?",a:["Alles perfekt auf Anhieb","Er bohrte ins Stromkabel","Das Loch wurde viel zu gross","Er vergass zu bohren"],r:2,t:"Masse ist relativ. Die Wand sieht es anders."},
+{f:"Fabian dachte, Breakdance kann doch jeder. Was war das Ergebnis?",a:["Er wurde sofort zum Star der Tanzflaeche","Verletzung am Daumen nach wenigen Takten","Er tanzte die ganze Nacht durch","Standing Ovations von allen"],r:1,t:"Spoiler: Kann nicht jeder. Fabian weiss das jetzt auch."}
 ];
 
-let current = 0, score = 0, answered = false;
+var aktuell=0,punkte=0,beantwortet=false,spielerName='';
 
-function render() {
-  const q = questions[current];
-  document.getElementById('prog').style.width = (current / questions.length * 100) + '%';
-  document.getElementById('prog-label').textContent = (current + 1) + ' / ' + questions.length;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('next-btn').style.display = 'none';
-  answered = false;
-
-  const optDiv = document.getElementById('options');
-  optDiv.innerHTML = '';
-  q.opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = opt;
-    btn.onclick = () => choose(i);
-    optDiv.appendChild(btn);
-  });
+function startQuiz(){
+  var n=document.getElementById('nameInput').value.trim();
+  if(!n){alert('Bitte Namen eingeben!');return;}
+  spielerName=n;
+  document.getElementById('startscreen').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  aktuell=0;punkte=0;
+  zeige();
 }
 
-function choose(idx) {
-  if (answered) return;
-  answered = true;
-  const q = questions[current];
-  const btns = document.querySelectorAll('.option-btn');
-  btns.forEach((b, i) => {
-    b.disabled = true;
-    if (i === q.correct) b.classList.add('correct');
-    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
-  });
-  if (idx === q.correct) score++;
-  document.getElementById('feedback').textContent = q.feedback;
-  document.getElementById('next-btn').style.display = 'block';
-}
+document.getElementById('nameInput').addEventListener('keydown',function(e){if(e.key==='Enter')startQuiz();});
 
-document.getElementById('next-btn').onclick = () => {
-  current++;
-  if (current < questions.length) {
-    render();
-  } else {
-    showScore();
+function zeige(){
+  var q=fragen[aktuell];
+  document.getElementById('fort').textContent='Frage '+(aktuell+1)+' von '+fragen.length;
+  document.getElementById('balken').style.width=(aktuell/fragen.length*100)+'%';
+  document.getElementById('frage').textContent=q.f;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('weiter').style.display='none';
+  beantwortet=false;
+  var div=document.getElementById('antworten');
+  div.innerHTML='';
+  for(var i=0;i<q.a.length;i++){
+    var btn=document.createElement('button');
+    btn.className='antwort';
+    btn.textContent=q.a[i];
+    btn.setAttribute('data-i',i);
+    btn.onclick=waehle;
+    div.appendChild(btn);
   }
+}
+
+function waehle(e){
+  if(beantwortet)return;
+  beantwortet=true;
+  var idx=parseInt(e.target.getAttribute('data-i'));
+  var q=fragen[aktuell];
+  var btns=document.querySelectorAll('.antwort');
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    if(i===q.r)btns[i].className='antwort richtig';
+    else if(i===idx)btns[i].className='antwort falsch';
+  }
+  if(idx===q.r)punkte++;
+  document.getElementById('feedback').textContent=q.t;
+  document.getElementById('weiter').style.display='block';
+}
+
+document.getElementById('weiter').onclick=function(){
+  aktuell++;
+  if(aktuell<fragen.length){zeige();}else{zeigeErgebnis();}
 };
 
-function showScore() {
-  document.querySelector('.progress-wrap').style.display = 'none';
-  document.querySelector('.card').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
-
-  const pct = score / questions.length;
-  let emoji, msg;
-  if (pct === 1) {
-    emoji = '🏆'; msg = 'Perfekt! Du kennst Fabian besser als er sich selbst kennt. Verdächtig...';
-  } else if (pct >= 0.7) {
-    emoji = '🤙'; msg = 'Solide! Du hast gut aufgepasst. Fabian würde das mit einem Nicken quittieren.';
-  } else if (pct >= 0.4) {
-    emoji = '🤔'; msg = 'Mittelfeld. Mehr Zeit mit Fabian verbringen — und weniger auf seine Füsse schauen.';
-  } else {
-    emoji = '🏄'; msg = 'Ausbaufähig. Zum Glück ist Fabian so hilfsbereit, dass er dir das verzeiht.';
-  }
-
-  const card = document.getElementById('score-card');
-  card.innerHTML = `
-    <div class="score-emoji">${emoji}</div>
-    <div class="score-big">${score}</div>
-    <div class="score-denom">von ${questions.length}</div>
-    <div class="score-label">Punkte</div>
-    <div class="result-msg">${msg}</div>
-    <button class="restart-btn" id="restart">Nochmal spielen</button>
-  `;
-  card.style.display = 'block';
-
-  document.getElementById('restart').onclick = () => {
-    current = 0; score = 0;
-    card.style.display = 'none';
-    document.querySelector('.progress-wrap').style.display = 'flex';
-    document.querySelector('.card').style.display = 'block';
-    render();
-  };
+function zeigeErgebnis(){
+  document.getElementById('quiz').style.display='none';
+  var p=punkte/fragen.length,e,m;
+  if(p===1){e='🏆';m='Perfekt! '+spielerName+' kennt Fabian besser als er sich selbst kennt.';}
+  else if(p>=0.7){e='🤙';m='Solide, '+spielerName+'! Fabian wuerde das mit einem Nicken quittieren.';}
+  else if(p>=0.4){e='🤔';m='Mittelfeld, '+spielerName+'. Mehr Zeit mit Fabian verbringen!';}
+  else{e='🏄';m=spielerName+', ausbaufaehig. Zum Glueck ist Fabian hilfsbereit genug um das zu verzeihen.';}
+  document.getElementById('emoji').textContent=e;
+  document.getElementById('ergebnis-name').textContent=spielerName;
+  document.getElementById('punkte').textContent=punkte;
+  document.getElementById('von').textContent='von '+fragen.length+' Punkten';
+  document.getElementById('msg').textContent=m;
+  document.getElementById('ergebnis').style.display='block';
+  speichereUndLadeRangliste();
 }
 
-render();
+function speichereUndLadeRangliste(){
+  var eintrag={name:spielerName,punkte:punkte,total:fragen.length,zeit:Date.now()};
+  fetch(DB+'.json',{method:'POST',body:JSON.stringify(eintrag),headers:{'Content-Type':'application/json'}})
+    .then(function(){return fetch(DB+'.json');})
+    .then(function(r){return r.json();})
+    .then(function(data){zeigeRangliste(data);})
+    .catch(function(){document.getElementById('rangliste').innerHTML='<div class="laden">Rangliste konnte nicht geladen werden.</div>';});
+}
+
+function zeigeRangliste(data){
+  var liste=[];
+  if(data){
+    var keys=Object.keys(data);
+    for(var i=0;i<keys.length;i++){
+      liste.push(data[keys[i]]);
+    }
+  }
+  liste.sort(function(a,b){return b.punkte-a.punkte;});
+  var medals=['🥇','🥈','🥉'];
+  var html='<h2>🏅 Rangliste aller Gaeste</h2>';
+  for(var i=0;i<liste.length;i++){
+    var istIch=(liste[i].name===spielerName&&liste[i].punkte===punkte);
+    html+='<div class="rang-eintrag'+(i===0?' ich':istIch?' ich':'')+'">';
+    html+='<span class="rang-platz">'+(medals[i]||(i+1)+'.')+'</span>';
+    html+='<span class="rang-name">'+liste[i].name+(istIch&&i>0?' ◀':'')+'</span>';
+    html+='<span class="rang-punkte">'+liste[i].punkte+' / '+liste[i].total+'</span>';
+    html+='</div>';
+  }
+  document.getElementById('rangliste').innerHTML=html;
+}
+
+function neustart(){
+  document.getElementById('ergebnis').style.display='none';
+  document.getElementById('nameInput').value='';
+  document.getElementById('rangliste').innerHTML='<div class="laden">Rangliste wird geladen...</div>';
+  document.getElementById('startscreen').style.display='block';
+}
 </script>
 </body>
 </html>
